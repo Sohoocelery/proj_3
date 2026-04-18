@@ -1,0 +1,13 @@
+{
+  "name": "college-event-redis-rsvp",
+  "version": "1.0.0",
+  "description": "Redis-backed RSVP & waitlist system for the College Event Planning Network",
+  "type": "module",
+  "main": "rsvp.js",
+  "scripts": {
+    "start": "node rsvp.js"
+  },
+  "dependencies": {
+    "redis": "^4.6.13"
+  }
+}
