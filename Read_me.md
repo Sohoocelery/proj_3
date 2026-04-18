@@ -1,77 +1,20 @@
-README.md
-markdown
-# College Event RSVP System with Redis
-
-Real-time event RSVP and waitlist management using Redis for atomic operations and race condition prevention.
-
-## Features
-
-- Atomic RSVP capacity enforcement
-- Automated waitlist with FIFO ordering
-- Instant promotion when attendees cancel
-- O(1) duplicate checking
-
-## Redis Data Structures
-
-**Hash** - `event:{id}:stats` - Tracks confirmed_count, waitlisted_count, capacity
-
-**Sorted Set** - `event:{id}:waitlist` - Chronological waitlist (timestamp scores)
-
-**Set** - `event:{id}:confirmed` - Confirmed attendee IDs
-
-**Set** - `active:events` - Events with active Redis data
-
-## CRUD Examples
-
-```redis
-# CREATE - RSVP
-SADD event:101:confirmed student_123
-HINCRBY event:101:stats confirmed_count 1
-
-# READ - Check status
-HGETALL event:101:stats
-
-# UPDATE - Promote from waitlist
-ZREM event:101:waitlist student_456
-SADD event:101:confirmed student_456
-
-# DELETE - Cancel RSVP
-SREM event:101:confirmed student_123
-```
-
-## Video Demo
-
-[Watch Demo](https://youtu.be/your-link)
-
-## Team
-
-**[Your Name]** - Redis design, CRUD operations, documentation
-
-**[Member 2]** - Express app, video
-
-## AI Disclosure
-
-Claude assisted with Redis structure design and documentation. All implementation by team.
-
-## Tech Stack
-
-Node.js • Express • Redis • PostgreSQL • EJS
-
-GitHub About
-Description:
-Real-time event RSVP with Redis waitlist management
-Topics:
-redis, nodejs, express, rsvp-system, database-systems
-
-Commit Messages
-Add Redis event statistics hash
-Add waitlist sorted set
-Add confirmed attendees set
-Implement RSVP CRUD operations
-Add auto-promotion logic
-Fix capacity race condition
-Update README
-Add video link
-
-Project Title
-College Event RSVP System with Redis
+College Event Planning & Budget Management Network
+CS 3200 — Project 3: Redis In-Memory Key-Value Store
+Project Overview
+A student organization event platform where clubs submit events for admin approval and students RSVP to approved events. This project extends the relational database from Projects 1 and 2 with a Redis caching layer that handles real-time RSVP concurrency and waitlist management.
+The Problem Redis Solves
+When a popular event opens for RSVPs, multiple students can click register at the exact same moment. In a relational database, two threads can both read "seats available" before either one writes the update back, causing the event to overbook beyond its capacity. This is a race condition.
+Redis solves this through atomic operations. An atomic operation is guaranteed to complete without interruption, meaning no other process can sneak in between a read and a write. This makes Redis the right tool for enforcing real-time capacity limits under concurrent load.
+Redis Use Case: Real-Time RSVP and Waitlist System
+Redis acts as a high-performance caching layer for live event state. The relational database still maintains permanent RSVP records and event details. Redis only holds what needs to be fast and real-time.
+Three Redis data structures are used per event. See data-structures.md for full definitions and CRUD commands.
+The first structure is a Hash stored at the key event:{eventId}:meta. It holds scalar metadata including title, capacity, confirmed_count, and waitlist_count. Individual fields can be incremented atomically with HINCRBY without rewriting the whole object.
+The second structure is a Set stored at event:{eventId}:confirmed. It holds the student IDs of all confirmed attendees. SISMEMBER checks for duplicates in O(1) constant time regardless of how many students are in the set.
+The third structure is a Sorted Set stored at event:{eventId}:waitlist. It holds waitlisted student IDs scored by Unix timestamp in milliseconds. Whoever registered first has the lowest score. ZPOPMIN always removes and returns the earliest registrant, guaranteeing FIFO ordering without any extra sorting logic.
+Business Rules
+Events enforce a maximum capacity on a first-come, first-served basis. RSVP operations use Redis transactions via MULTI/EXEC to prevent overbooking. The waitlist is ordered by registration timestamp so the longest-waiting student is always promoted first. Cancellations by confirmed attendees automatically trigger promotion of the next person on the waitlist. Duplicate RSVPs are rejected at the Set membership check before any writes occur.
+Running the Node Script
+Prerequisites are Node.js 18 or later and Redis running locally on port 6379. Start Redis with redis-server, then run npm install followed by npm start from the project directory.
+The script seeds two events, RSVPs five students to a capacity-3 event with three confirmed and two waitlisted, cancels a confirmed RSVP which triggers automatic waitlist promotion, removes a waitlist entry, and deletes the event entirely. All four CRUD operations are demonstrated.
+Repository Structure
+rsvp.js is the Node.js Redis script implementing the full RSVP and waitlist system. package.json contains the project metadata and the redis npm dependency. data-structures.md contains the Redis data structure definitions and the full CRUD command reference for all use cases. The requirements folder contains Final_Project.pdf with the Part 1 requirements document and UML conceptual model.
