@@ -18,3 +18,5 @@ Prerequisites are Node.js 18 or later and Redis running locally on port 6379. St
 The script seeds two events, RSVPs five students to a capacity-3 event with three confirmed and two waitlisted, cancels a confirmed RSVP which triggers automatic waitlist promotion, removes a waitlist entry, and deletes the event entirely. All four CRUD operations are demonstrated.
 Repository Structure
 rsvp.js is the Node.js Redis script implementing the full RSVP and waitlist system. package.json contains the project metadata and the redis npm dependency. data-structures.md contains the Redis data structure definitions and the full CRUD command reference for all use cases. The requirements folder contains Final_Project.pdf with the Part 1 requirements document and UML conceptual model.
+AI Disclosure
+Claude (Anthropic) was used to assist in generating rsvp.js and this README. All Redis data structure design decisions, business rules, and UML diagrams were authored by the project team. All generated code was reviewed and understood before submission.
