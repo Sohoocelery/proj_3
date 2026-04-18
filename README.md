@@ -21,3 +21,6 @@ The script seeds two events, RSVPs five students to a capacity-3 event with thre
 
 Repository Structure
 rsvp.js is the Node.js Redis script implementing the full RSVP and waitlist system. package.json contains the project metadata and the redis npm dependency. data-structures.md contains the Redis data structure definitions and the full CRUD command reference for all use cases. The requirements folder contains Final_Project.pdf with the Part 1 requirements document and UML conceptual model.
+
+AI Disclosure
+AI tools were used throughout this project as a learning aid. This included using them to better understand Redis data structures, clarify how atomic transactions work, and explore best practices for key naming conventions. All design decisions, including the choice of data structures, the business logic for capacity enforcement and waitlist promotion, and the overall system architecture, were made by the project team. The code was written, reviewed, and understood by us before submission.
